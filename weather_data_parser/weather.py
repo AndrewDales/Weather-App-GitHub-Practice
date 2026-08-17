@@ -1,13 +1,12 @@
 # weather.py
 
 import argparse
+import datetime
 import json
 import sys
-import datetime
 from configparser import ConfigParser
 from pathlib import Path
 from urllib import error, parse, request
-
 
 import style
 
@@ -126,7 +125,7 @@ def display_weather_info(weather_data, imperial=False):
     weather_symbol, color = _select_weather_display_params(weather_id)
     
     print(_get_local_date_time(weather_data))
-    print(f'The current temperature in ', end="")
+    print('The current temperature in ', end="")
     style.change_color(style.REVERSE)
     print(f'{city}', end="")
     style.change_color(style.RESET)
