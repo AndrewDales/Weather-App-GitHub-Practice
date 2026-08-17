@@ -3,9 +3,11 @@
 import argparse
 import json
 import sys
+import datetime
 from configparser import ConfigParser
 from pathlib import Path
 from urllib import error, parse, request
+
 
 import style
 
@@ -123,6 +125,7 @@ def display_weather_info(weather_data, imperial=False):
     
     weather_symbol, color = _select_weather_display_params(weather_id)
     
+    print(_get_local_date_time(weather_data))
     print(f'The current temperature in ', end="")
     style.change_color(style.REVERSE)
     print(f'{city}', end="")
@@ -134,6 +137,7 @@ def display_weather_info(weather_data, imperial=False):
     style.change_color(style.RESET)
     
 def _select_weather_display_params(weather_id):
+    # Select parameters for displaying the weather, based on the type of weather in the weather_id
     if weather_id in THUNDERSTORM:
         display_params = ("💥", style.RED)
     elif weather_id in DRIZZLE:
@@ -151,6 +155,17 @@ def _select_weather_display_params(weather_id):
     else:  # In case the API adds new weather codes
         display_params = ("🌈", style.RESET)
     return display_params
+
+def _get_local_date_time(weather_data):
+    # Returns a local data_time string based on the information in weather_data
+    utc_time = weather_data["dt"]
+    local_timezone_offset = weather_data["timezone"]
+    
+    tz = datetime.timezone(datetime.timedelta(seconds=local_timezone_offset))
+    local_time = datetime.datetime.fromtimestamp(utc_time, tz)
+    
+    return local_time.strftime("%A, %d/%m/%y, %#I:%M %p")
+    
     
 
 if __name__ == "__main__":
