@@ -3,4 +3,4 @@ __pycache__/
 .env
 venv/
 .git
-weather-data-parser/secrets.ini
+weather_data_parser/secrets.ini
