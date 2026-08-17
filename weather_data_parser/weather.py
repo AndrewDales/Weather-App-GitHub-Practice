@@ -53,10 +53,31 @@ def _get_api_key():
         [openweather]
         api_key=<YOUR-OPENWEATHER-API-KEY>
     """
-    
+    config_path = Path(__file__).resolve().parent / "secrets.ini"
+
+    if not config_path.is_file():
+        raise FileNotFoundError(
+            f"Missing config file: {config_path}. "
+            "Create secrets.ini in the same folder as weather.py."
+        )
+
     config = ConfigParser()
-    config.read(Path(__file__).parent / "secrets.ini")
-    return config["openweather"]["api_key"]
+    config.read(config_path)
+
+    if not config.has_section("openweather"):
+        raise KeyError(f"Missing [openweather] section in {config_path}.")
+
+    if not config.has_option("openweather", "api_key"):
+        raise KeyError(
+            f"Missing 'api_key' option under [openweather] in {config_path}."
+        )
+
+    api_key = config.get("openweather", "api_key").strip()
+
+    if not api_key:
+        raise ValueError(f"The 'api_key' field in {config_path} is empty.")
+
+    return api_key
 
 def build_weather_query(city_input, imperial=False):
     """Builds the URL for an API request to OpenWeather's weather API.
